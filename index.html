@@ -1,0 +1,275 @@
+<!doctype html><html><head><meta charset=utf8><meta name=viewport content="width=device-width,initial-scale=1,viewport-fit=cover"><style>:root{color-scheme:light;box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}html{scroll-padding-top:env(safe-area-inset-top,0px)}body{margin:0;padding:0;font:14px -apple-system,BlinkMacSystemFont,sans-serif;background:#fff;color:#000}img{max-width:100%}[hidden]:not([hidden=until-found i]){display:none!important}</style></head><body>
+<title>اختبار الشغل</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans+Arabic:wght@400;500;600&family=Reem+Kufi:wght@500;700&display=swap">
+<style>
+/* Layout: a lab-notebook page on graph paper; one question at a time in a ruled card, segmented progress strip above. */
+:root {
+  --bg: #eef3f1;
+  --grid: #d9e4e0;
+  --surface: #ffffff;
+  --ink: #14262b;
+  --muted: #55696d;
+  --line: #c9d8d3;
+  --accent: #0d6b73;
+  --accent-ink: #ffffff;
+  --accent-soft: #dcefef;
+  --good: #1f7a4d;
+  --good-soft: #def2e6;
+  --bad: #b3382c;
+  --bad-soft: #f8e1dd;
+  --font-display: "Reem Kufi", "IBM Plex Sans Arabic", system-ui, sans-serif;
+  --font-body: "IBM Plex Sans Arabic", system-ui, -apple-system, "Segoe UI", Tahoma, sans-serif;
+}
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) {
+    --bg: #0e1a1d; --grid: #182a2e; --surface: #142327; --ink: #e4efef; --muted: #98b0b3;
+    --line: #28413f; --accent: #5cc4cc; --accent-ink: #082327; --accent-soft: #19393c;
+    --good: #5fcf92; --good-soft: #163a29; --bad: #ff8d7e; --bad-soft: #43201c;
+    color-scheme: dark;
+  }
+}
+:root[data-theme="dark"] {
+  --bg: #0e1a1d; --grid: #182a2e; --surface: #142327; --ink: #e4efef; --muted: #98b0b3;
+  --line: #28413f; --accent: #5cc4cc; --accent-ink: #082327; --accent-soft: #19393c;
+  --good: #5fcf92; --good-soft: #163a29; --bad: #ff8d7e; --bad-soft: #43201c;
+  color-scheme: dark;
+}
+* { box-sizing: border-box; }
+body {
+  background-color: var(--bg);
+  background-image:
+    linear-gradient(var(--grid) 1px, transparent 1px),
+    linear-gradient(90deg, var(--grid) 1px, transparent 1px);
+  background-size: 28px 28px;
+  color: var(--ink);
+  font-family: var(--font-body);
+  font-size: 17px;
+  line-height: 1.8;
+  padding-block: 28px 48px;
+  padding-left: max(16px, env(safe-area-inset-left, 0px));
+  padding-right: max(16px, env(safe-area-inset-right, 0px));
+}
+main { max-width: 720px; margin-inline: auto; display: grid; gap: 18px; }
+.ltr { direction: ltr; unicode-bidi: isolate; display: inline-block; font-variant-numeric: tabular-nums; }
+header { display: grid; gap: 4px; }
+.eyebrow { font-size: 14px; color: var(--muted); letter-spacing: .02em; }
+h1 { font-family: var(--font-display); font-weight: 700; font-size: clamp(34px, 8vw, 48px); line-height: 1.2; margin: 0; text-wrap: balance; }
+h1 span { color: var(--accent); }
+
+.strip { display: grid; grid-template-columns: repeat(10, 1fr); gap: 5px; }
+.tick { height: 8px; border-radius: 2px; background: var(--line); transition: background .2s; }
+.tick.now { background: var(--accent); }
+.tick.ok { background: var(--good); }
+.tick.no { background: var(--bad); }
+.meta { display: flex; justify-content: space-between; gap: 12px; font-size: 14px; color: var(--muted); }
+
+.card { background: var(--surface); border: 1px solid var(--line); border-radius: 6px; padding: 22px 22px 24px; display: grid; gap: 18px; min-width: 0; }
+.qnum { font-family: var(--font-display); font-size: 15px; color: var(--accent); font-weight: 500; }
+.prompt { font-size: 20px; line-height: 1.85; margin: 0; font-weight: 500; text-wrap: pretty; }
+.options { display: grid; gap: 10px; }
+.opt {
+  font: inherit; color: inherit; text-align: start; cursor: pointer;
+  display: grid; grid-template-columns: 34px 1fr; align-items: center; gap: 12px;
+  background: var(--surface); border: 1.5px solid var(--line); border-radius: 6px;
+  padding: 10px 14px; min-height: 52px; width: 100%;
+  transition: border-color .15s, background .15s;
+}
+.opt:hover:not(:disabled) { border-color: var(--accent); background: var(--accent-soft); }
+.opt:disabled { cursor: default; }
+.opt .letter {
+  width: 30px; height: 30px; border-radius: 50%; border: 1.5px solid var(--line);
+  display: grid; place-items: center; font-family: var(--font-display); font-size: 16px; line-height: 1;
+}
+.opt .txt { min-width: 0; overflow-wrap: anywhere; unicode-bidi: plaintext; }
+.opt.right { border-color: var(--good); background: var(--good-soft); }
+.opt.right .letter { background: var(--good); border-color: var(--good); color: var(--surface); }
+.opt.wrong { border-color: var(--bad); background: var(--bad-soft); }
+.opt.wrong .letter { background: var(--bad); border-color: var(--bad); color: var(--surface); }
+.opt.dim { opacity: .6; }
+:focus-visible { outline: 3px solid var(--accent); outline-offset: 2px; }
+
+.row { display: flex; flex-wrap: wrap; gap: 10px; align-items: center; justify-content: space-between; }
+.btn {
+  font: inherit; font-weight: 600; cursor: pointer; border-radius: 6px; padding: 10px 22px; min-height: 46px;
+  border: 1.5px solid var(--accent); background: var(--accent); color: var(--accent-ink);
+}
+.btn.ghost { background: transparent; color: var(--accent); }
+.btn:hover { filter: brightness(1.08); }
+.hint { font-size: 15px; color: var(--muted); }
+.hintbox { background: var(--accent-soft); border-radius: 6px; padding: 10px 14px; font-size: 16px; }
+.explain { border-top: 1.5px dashed var(--line); padding-top: 14px; display: grid; gap: 4px; }
+.verdict { font-family: var(--font-display); font-size: 20px; font-weight: 700; }
+.verdict.ok { color: var(--good); }
+.verdict.no { color: var(--bad); }
+.explain p { margin: 0; }
+
+.score { display: grid; gap: 6px; justify-items: start; }
+.big { font-family: var(--font-display); font-weight: 700; font-size: clamp(56px, 16vw, 84px); line-height: 1; color: var(--accent); }
+.big small { font-size: .4em; color: var(--muted); font-weight: 500; }
+.msg { font-size: 19px; margin: 0; }
+.review { display: grid; gap: 14px; }
+.review h2 { font-family: var(--font-display); font-size: 22px; margin: 0; }
+.miss { border: 1px solid var(--line); border-radius: 6px; padding: 14px 16px; display: grid; gap: 6px; background: var(--surface); }
+.miss p { margin: 0; font-size: 16px; }
+.miss .mine { color: var(--bad); }
+.miss .ans { color: var(--good); }
+.foot { font-size: 13px; color: var(--muted); text-align: center; }
+@media (max-width: 480px) { .card { padding: 18px 14px 20px; } .prompt { font-size: 18px; } }
+@media (prefers-reduced-motion: reduce) { * { transition: none !important; } }
+</style>
+
+<main dir="rtl" lang="ar">
+  <header>
+    <div class="eyebrow">الصف الثاني الثانوي · فيزياء · نمط الاختبار التحصيلي</div>
+    <h1>اختبار <span>الشغل</span></h1>
+  </header>
+  <div id="app"></div>
+  <div class="foot">10 أسئلة اختيار من متعدد · التصحيح فوري بعد كل سؤال</div>
+</main>
+
+<script>
+(function () {
+  var L = ['أ', 'ب', 'ج', 'د'];
+  var Q = [
+    { p: 'أثّرت قوة مقدارها {{20 N}} في جسم فأزاحته مسافة {{5 m}} في اتجاه القوة نفسه. ما الشغل المبذول؟',
+      o: ['{{4 J}}', '{{25 J}}', '{{100 J}}', '{{0 J}}'], c: 2,
+      e: 'عندما تكون القوة في اتجاه الإزاحة تكون {{θ = 0}} و{{cos 0 = 1}}، إذن {{W = F × d = 20 × 5 = 100 J}}.',
+      h: '{{W = F d cos θ}}' },
+    { p: 'يحمل شخص حقيبة ويمشي بها على أرض أفقية بسرعة ثابتة. الشغل الذي تبذله قوة رفع الشخص للحقيبة يساوي:',
+      o: ['صفرًا', 'موجبًا', 'سالبًا', 'وزن الحقيبة × المسافة'], c: 0,
+      e: 'قوة الرفع رأسية والإزاحة أفقية، فالزاوية بينهما {{90°}} و{{cos 90° = 0}}، لذا الشغل يساوي صفرًا.',
+      h: 'ما الزاوية بين القوة الرأسية والإزاحة الأفقية؟' },
+    { p: 'تؤثر قوة {{50 N}} بزاوية {{60°}} فوق الأفقي في عربة فتزيحها أفقيًا {{10 m}}. ما الشغل المبذول؟ ({{cos 60° = 0.5}})',
+      o: ['{{500 J}}', '{{250 J}}', '{{433 J}}', '{{25 J}}'], c: 1,
+      e: '{{W = F d cos θ = 50 × 10 × 0.5 = 250 J}}.',
+      h: 'لا تنسَ ضرب {{cos θ}}.' },
+    { p: 'وحدة قياس الشغل في النظام الدولي (الجول) تكافئ:',
+      o: ['{{kg·m/s²}}', '{{N/m}}', '{{kg·m²/s²}}', '{{kg·m/s}}'], c: 2,
+      e: '{{J = N·m = (kg·m/s²)·m = kg·m²/s²}}.',
+      h: 'الجول = نيوتن × متر' },
+    { p: 'في منحنى (القوة – الإزاحة)، قوة ثابتة مقدارها {{10 N}} أثّرت على امتداد إزاحة من {{0}} إلى {{4 m}}. ما الشغل المبذول؟',
+      o: ['{{2.5 J}}', '{{14 J}}', '{{20 J}}', '{{40 J}}'], c: 3,
+      e: 'الشغل يساوي المساحة تحت المنحنى، وهي مستطيل: {{10 × 4 = 40 J}}.',
+      h: 'الشغل = المساحة تحت المنحنى.' },
+    { p: 'ينزلق صندوق مسافة {{6 m}} على سطح خشن وتؤثر عليه قوة احتكاك {{15 N}}. ما شغل قوة الاحتكاك؟',
+      o: ['{{+90 J}}', '{{−90 J}}', '{{+2.5 J}}', 'صفر'], c: 1,
+      e: 'قوة الاحتكاك تعاكس الإزاحة، فالزاوية {{180°}} و{{cos 180° = −1}}، إذن {{W = 15 × 6 × (−1) = −90 J}}.',
+      h: 'في أي اتجاه تؤثر قوة الاحتكاك بالنسبة للإزاحة؟' },
+    { p: 'رُفع جسم كتلته {{2 kg}} رأسيًا إلى أعلى مسافة {{3 m}} بسرعة ثابتة. ما الشغل المبذول لرفعه؟ ({{g = 10 m/s²}})',
+      o: ['{{6 J}}', '{{20 J}}', '{{30 J}}', '{{60 J}}'], c: 3,
+      e: 'السرعة ثابتة فقوة الرفع تساوي الوزن: {{mg = 2 × 10 = 20 N}}، إذن {{W = 20 × 3 = 60 J}}.',
+      h: 'أوجد الوزن أولًا.' },
+    { p: 'تغيرت سرعة جسم كتلته {{2 kg}} من {{3 m/s}} إلى {{5 m/s}}. ما الشغل الكلي المبذول عليه؟',
+      o: ['{{16 J}}', '{{4 J}}', '{{34 J}}', '{{8 J}}'], c: 0,
+      e: 'حسب نظرية الشغل والطاقة: {{W = ΔKE = ½ m (v₂² − v₁²) = ½ × 2 × (25 − 9) = 16 J}}.',
+      h: 'الشغل الكلي = التغير في الطاقة الحركية.' },
+    { p: 'في أي الحالات التالية يُبذل شغل بالمعنى الفيزيائي؟',
+      o: ['شخص يدفع جدارًا ثابتًا بقوة كبيرة', 'رباع يحمل ثقلًا ثابتًا فوق رأسه', 'شخص يسحب عربة فتتحرك مسافة معينة', 'قمر صناعي يدور في مدار دائري حول الأرض'], c: 2,
+      e: 'يُبذل شغل عندما تؤثر قوة وتحدث إزاحة في اتجاه مركبة القوة. في الجدار والثقل الثابت لا توجد إزاحة، وفي المدار الدائري تتعامد قوة الجاذبية مع الإزاحة فيكون الشغل صفرًا.',
+      h: 'لا بد من وجود قوة وإزاحة معًا.' },
+    { p: 'تزداد قوة خطيًّا من صفر إلى {{20 N}} على امتداد إزاحة {{5 m}}. ما الشغل المبذول؟',
+      o: ['{{100 J}}', '{{50 J}}', '{{25 J}}', '{{20 J}}'], c: 1,
+      e: 'المساحة تحت المنحنى مثلث: {{½ × 5 × 20 = 50 J}}.',
+      h: 'شكل المساحة هنا مثلث وليس مستطيلًا.' }
+  ];
+
+  var app = document.getElementById('app');
+  var st = { i: 0, picks: [], done: false, hint: false };
+
+  function f(s) { return s.replace(/\{\{(.+?)\}\}/g, '<span class="ltr">$1</span>'); }
+
+  function strip() {
+    var t = '';
+    for (var k = 0; k < Q.length; k++) {
+      var cls = 'tick';
+      if (st.picks[k] !== undefined) cls += st.picks[k] === Q[k].c ? ' ok' : ' no';
+      else if (k === st.i && !st.done) cls += ' now';
+      t += '<div class="' + cls + '"></div>';
+    }
+    return '<div class="strip" aria-hidden="true">' + t + '</div>';
+  }
+
+  function render() {
+    if (st.done) return renderResult();
+    var q = Q[st.i], picked = st.picks[st.i], answered = picked !== undefined;
+    var h = strip();
+    h += '<div class="meta"><span>السؤال <span class="ltr">' + (st.i + 1) + ' / ' + Q.length + '</span></span><span>الصحيح حتى الآن: <span class="ltr">' + score() + '</span></span></div>';
+    h += '<section class="card"><div class="qnum">السؤال ' + (st.i + 1) + '</div><p class="prompt">' + f(q.p) + '</p><div class="options" role="group" aria-label="الخيارات">';
+    for (var k = 0; k < q.o.length; k++) {
+      var cls = 'opt';
+      if (answered) {
+        if (k === q.c) cls += ' right'; else if (k === picked) cls += ' wrong'; else cls += ' dim';
+      }
+      h += '<button class="' + cls + '" data-k="' + k + '"' + (answered ? ' disabled' : '') + '><span class="letter">' + L[k] + '</span><span class="txt">' + f(q.o[k]) + '</span></button>';
+    }
+    h += '</div>';
+    if (!answered) {
+      h += '<div class="row"><button class="btn ghost" id="hintBtn" type="button">' + (st.hint ? 'إخفاء التلميح' : 'أحتاج تلميحًا') + '</button></div>';
+      if (st.hint) h += '<div class="hintbox">' + f(q.h) + '</div>';
+    } else {
+      var ok = picked === q.c;
+      h += '<div class="explain" aria-live="polite"><div class="verdict ' + (ok ? 'ok' : 'no') + '">' + (ok ? 'إجابة صحيحة' : 'إجابة غير صحيحة') + '</div><p>' + f(q.e) + '</p></div>';
+      h += '<div class="row"><span class="hint"></span><button class="btn" id="nextBtn" type="button">' + (st.i === Q.length - 1 ? 'عرض النتيجة' : 'السؤال التالي') + '</button></div>';
+    }
+    h += '</section>';
+    app.innerHTML = h;
+    var nb = document.getElementById('nextBtn');
+    if (nb) nb.focus({ preventScroll: true });
+  }
+
+  function score() {
+    var s = 0;
+    for (var k = 0; k < Q.length; k++) if (st.picks[k] === Q[k].c) s++;
+    return s;
+  }
+
+  function renderResult() {
+    var s = score(), n = Q.length, m;
+    if (s === n) m = 'ممتاز، أجبت عن كل الأسئلة بشكل صحيح.';
+    else if (s >= 8) m = 'مستوى قوي. راجع الأسئلة التي أخطأت فيها أدناه.';
+    else if (s >= 5) m = 'مستوى جيد. راجع القوانين وحاول مرة أخرى.';
+    else m = 'تحتاج إلى مراجعة الدرس: الشغل، والزاوية بين القوة والإزاحة، والمساحة تحت المنحنى.';
+    var h = strip();
+    h += '<section class="card"><div class="score"><div class="qnum">نتيجتك</div><div class="big"><span class="ltr">' + s + '<small> / ' + n + '</small></span></div><p class="msg">' + m + '</p></div>';
+    var wrong = [];
+    for (var k = 0; k < n; k++) if (st.picks[k] !== Q[k].c) wrong.push(k);
+    if (wrong.length) {
+      h += '<div class="review"><h2>مراجعة الأخطاء</h2>';
+      wrong.forEach(function (k) {
+        var q = Q[k];
+        h += '<div class="miss"><p><strong>السؤال ' + (k + 1) + ':</strong> ' + f(q.p) + '</p><p class="mine">إجابتك: ' + f(q.o[st.picks[k]]) + '</p><p class="ans">الإجابة الصحيحة: ' + f(q.o[q.c]) + '</p><p>' + f(q.e) + '</p></div>';
+      });
+      h += '</div>';
+    }
+    h += '<div class="row"><span></span><button class="btn" id="again" type="button">إعادة الاختبار</button></div></section>';
+    app.innerHTML = h;
+    window.scrollTo(0, 0);
+  }
+
+  app.addEventListener('click', function (e) {
+    var t = e.target.closest('button');
+    if (!t) return;
+    if (t.classList.contains('opt')) {
+      if (st.picks[st.i] !== undefined) return;
+      st.picks[st.i] = +t.getAttribute('data-k');
+      st.hint = false;
+      render();
+    } else if (t.id === 'hintBtn') {
+      st.hint = !st.hint; render();
+    } else if (t.id === 'nextBtn') {
+      if (st.i === Q.length - 1) st.done = true; else { st.i++; st.hint = false; }
+      render();
+      if (!st.done) window.scrollTo(0, 0);
+    } else if (t.id === 'again') {
+      st = { i: 0, picks: [], done: false, hint: false }; render(); window.scrollTo(0, 0);
+    }
+  });
+
+  render();
+})();
+</script>
+
+</body></html>
